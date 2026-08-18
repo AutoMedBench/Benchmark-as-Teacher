@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "benchmark-as-teacher-core"
+version = "0.1.0"
+description = "Model-neutral Benchmark-as-Teacher data, training, evaluation, and promotion core"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = []
+
+[project.optional-dependencies]
+sft = [
+  "accelerate>=0.34",
+  "safetensors>=0.4",
+  "torch>=2.4",
+  "transformers>=4.46",
+]
+[project.scripts]
+bat-build-source = "scripts.build_bat_semantic_source:main"
+bat-build-round = "scripts.build_bat_core_dataset:main"
+bat-run-eval = "scripts.run_bat_core_eval:main"
+bat-run-loop = "scripts.run_bat_core_loop:main"
+bat-summarize-eval = "scripts.summarize_bat_core_eval:main"
+bat-check-gate = "scripts.check_bat_core_gate:main"
+
+[tool.setuptools.packages.find]
+include = ["rl*", "scripts*"]

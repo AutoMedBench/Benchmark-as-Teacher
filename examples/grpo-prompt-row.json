@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "example_only": true,
+  "data_source": "automedbench_clean_prompt",
+  "prompt": [
+    {
+      "role": "system",
+      "content": "Complete the requested workflow using observable execution evidence."
+    },
+    {
+      "role": "user",
+      "content": "A small-case check produced an inconsistent output shape. Diagnose it, run a corrected validation, and continue only after the result is non-degenerate."
+    }
+  ],
+  "ability": "automedbench:S3",
+  "reward_model": {
+    "style": "custom"
+  },
+  "extra_info": {
+    "state_id": "example_state_0001",
+    "target_stage": "S3",
+    "source_pool": "s_target",
+    "focus_stage": "S3",
+    "outcome_bucket": "recovery",
+    "track": "segmentation",
+    "assistant_target_included": false,
+    "teacher_trajectory_included": false,
+    "rollout_transcript_reuse_allowed": false,
+    "model_specific_serialization": false,
+    "reward_contract": {
+      "mode": "rubric_contract",
+      "rubric": "automedbench_stage",
+      "target_stage": "S3",
+      "items": [
+        "small_case_executed",
+        "output_shape_checked",
+        "non_degeneracy_checked",
+        "failure_diagnosed",
+        "correction_executed",
+        "corrected_result_verified"
+      ]
+    },
+    "provenance": {
+      "source": "heldout_safe_synthetic",
+      "clean_split": true,
+      "source_digest": "synthetic-example"
+    }
+  }
+}

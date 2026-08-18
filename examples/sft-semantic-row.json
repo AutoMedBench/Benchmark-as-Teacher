@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "example_only": true,
+  "messages": [
+    {
+      "role": "system",
+      "content": "Work through the staged task using only observable workspace evidence."
+    },
+    {
+      "role": "user",
+      "content": "Inspect the available files and prepare the environment for a small validation."
+    }
+  ],
+  "target": {
+    "role": "assistant",
+    "reasoning_summary": "Inspect the workspace before selecting dependencies or model resources.",
+    "action": {
+      "type": "tool",
+      "name": "execute_code",
+      "arguments": {
+        "language": "python",
+        "code": "from pathlib import Path\nprint(sorted(path.name for path in Path('.').iterdir()))"
+      }
+    }
+  },
+  "loss_mask": {
+    "messages": 0,
+    "target_reasoning_summary": 1,
+    "target_action": 1,
+    "padding": 0
+  },
+  "metadata": {
+    "stage": "S2",
+    "track": "classification",
+    "source": "heldout_safe_synthetic",
+    "model_specific_serialization": false
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "bat_method_reference",
+  "scope": {
+    "contains_runtime_harness": true,
+    "contains_loop_orchestrator": true,
+    "contains_external_evaluator_adapter": true,
+    "contains_training_data": false,
+    "contains_evaluation_records": false,
+    "contains_model_artifacts": false
+  },
+  "stages": [
+    {
+      "id": "S1",
+      "name": "plan",
+      "agentic_weight": 0.25
+    },
+    {
+      "id": "S2",
+      "name": "setup",
+      "agentic_weight": 0.15
+    },
+    {
+      "id": "S3",
+      "name": "validate",
+      "agentic_weight": 0.35
+    },
+    {
+      "id": "S4",
+      "name": "infer",
+      "agentic_weight": 0.15
+    },
+    {
+      "id": "S5",
+      "name": "submit",
+      "agentic_weight": 0.1
+    }
+  ],
+  "scoring": {
+    "task_weight": 0.5,
+    "agentic_weight": 0.5,
+    "missing_evidence_policy": "unscored",
+    "not_applicable_stage_policy": "renormalize_applicable_weights"
+  },
+  "data": {
+    "source_grid": {
+      "focus_values": [
+        "E2E",
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "tracks": [
+        "classification",
+        "synthesis",
+        "detection",
+        "segmentation",
+        "vqa",
+        "report",
+        "enhancement"
+      ],
+      "outcomes": [
+        "success",
+        "recovery",
+        "failure"
+      ],
+      "rows": 126,
+      "heldout_safe": true
+    },
+    "sft_source": {
+      "form": "multi_turn_context_single_semantic_assistant_target",
+      "model_specific_serialization": false,
+      "loss_mask": {
+        "context": 0,
+        "prior_assistant_turns": 0,
+        "tool_observations": 0,
+        "target_assistant_action": 1,
+        "padding": 0
+      }
+    },
+    "rl_source": {
+      "form": "prompt_only_model_independent",
+      "assistant_target_included": false,
+      "teacher_trajectory_included": false,
+      "rollout_transcript_reuse_allowed": false,
+      "model_specific_serialization": false
+    },
+    "round_view": {
+      "rows": 3024,
+      "complete_batches": 378,
+      "rows_per_batch": 8,
+      "pool_rows_per_batch": {
+        "s_target": 4,
+        "s_mix": 2,
+        "e2e": 2
+      },
+      "outcome_policy": "uniform_exact",
+      "deterministic_order": true
+    }
+  },
+  "training": {
+    "cold_start_sft": {
+      "run_once": true,
+      "update": "full_parameter",
+      "precision": "bf16",
+      "max_sequence_tokens": 8192,
+      "per_device_batch_size": 1,
+      "gradient_accumulation_steps": 4,
+      "global_batch_size": 32,
+      "learning_rate": 0.00002,
+      "max_steps": 200,
+      "validation_fraction": 0.05,
+      "max_validation_examples": 512,
+      "checkpoint_interval_steps": 10,
+      "checkpoint_retention": 3
+    },
+    "grpo": {
+      "reference_rounds": 10,
+      "steps_per_round": 50,
+      "prompt_groups_per_batch": 8,
+      "continuations_per_state": 4,
+      "advantage_group_key": "state_id",
+      "learning_rate": 2.5e-7,
+      "actor_kl_loss_coefficient": 0.006,
+      "use_kl_in_reward": false,
+      "normalize_advantage_by_std": false,
+      "loss_aggregation": "sequence_mean_then_token_mean",
+      "sampling_temperature": 0.7,
+      "checkpoint_interval_steps": 5,
+      "checkpoint_retention": 3,
+      "evaluation_cadence": "once_after_step_50",
+      "reference_eight_gpu_topology": {
+        "rollout_tensor_parallel_size": 1,
+        "rollout_replicas": 8
+      }
+    },
+    "multi_turn": {
+      "enabled": true,
+      "max_assistant_turns": 24,
+      "max_tool_response_turns": 23,
+      "max_tool_calls": 23,
+      "max_cumulative_response_tokens": 16384,
+      "max_tool_observation_characters": 2048,
+      "model_protocol_binding": "runtime_adapter_only"
+    }
+  },
+  "reward": {
+    "stage_local": "equal_weight_binary_checklist_with_execution_gates",
+    "e2e": {
+      "stage_mean_weight": 0.5,
+      "final_outcome_weight": 0.5
+    },
+    "verified_tool_execution_required_for_agentic_credit": true
+  },
+  "promotion_gate": {
+    "paired_cells_required": true,
+    "maximum_overall_drop": 0.01,
+    "maximum_task_drop": 0.03,
+    "maximum_per_track_drop": 0.05,
+    "maximum_s3_s5_stage_drop": 0.03,
+    "catastrophic_overall_drop": 0.2,
+    "promote_only_when_all_checks_pass": true,
+    "hold_checkpoint_policy": "retain_previous_eligible_checkpoint"
+  },
+  "target_selection": {
+    "stage_order": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "normal": "minimum_candidate_stage_score",
+    "held_with_positive_regression": "maximum_baseline_minus_candidate_stage_score",
+    "tie_break": "earliest_stage"
+  },
+  "firewall": {
+    "evaluation_to_training_allowed_fields": [
+      "aggregate_stage_scores",
+      "aggregate_task_scores",
+      "aggregate_track_changes",
+      "completion_counts",
+      "failure_categories"
+    ],
+    "evaluation_to_training_forbidden_fields": [
+      "task_identifiers",
+      "questions",
+      "answers",
+      "labels",
+      "reports",
+      "traces",
+      "tool_logs",
+      "workspace_paths",
+      "correction_text",
+      "assistant_transcripts"
+    ]
+  }
+}

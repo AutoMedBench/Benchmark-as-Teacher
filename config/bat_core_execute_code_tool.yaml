@@ -1,0 +1,29 @@
+tools:
+  - class_name: rl.grpo.core_agentic_sandbox.CoreSandboxExecuteCodeTool
+    config:
+      type: native
+      workspace_root: ${oc.env:BAT_CORE_AGENTIC_WORKSPACE_ROOT}
+      receipts_root: ${oc.env:BAT_CORE_AGENTIC_RECEIPTS_ROOT}
+      image: ${oc.env:BAT_SANDBOX_IMAGE}
+      runtime_binary: ${oc.env:BAT_CONTAINER_RUNTIME,docker}
+      timeout_seconds: 120
+    tool_schema:
+      type: function
+      function:
+        name: execute_code
+        description: >-
+          Run Python or bash inside the current isolated synthetic task sandbox.
+          The workspace persists across turns, but the model cannot choose its
+          host path. Network, GPU, package installation, and host filesystem
+          access are unavailable. Inspect real tool observations before making
+          claims and write task artifacts under outputs or validation.
+        parameters:
+          type: object
+          properties:
+            language:
+              type: string
+              enum: [python, bash]
+            code:
+              type: string
+          required: [language, code]
+        strict: true
