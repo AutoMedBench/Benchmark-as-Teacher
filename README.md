@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![arXiv](https://img.shields.io/badge/arXiv-2608.16211-b31b1b.svg?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.16211)
-[![Hugging Face Harness](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Harness%20Coming%20Soon-yellow)](#infrastructure)
+[![Blog](https://img.shields.io/badge/Blog-Benchmark--as--Teacher-76B900?logo=google-chrome&logoColor=white)](https://kumakuma2002.github.io/bat/)
 [![Hugging Face Data](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Training%20Data-yellow)](https://huggingface.co/collections/MitakaKuma/benchmark-as-teacher)
 [![AutoMedBench Leaderboard](https://img.shields.io/badge/%F0%9F%A4%97%20AutoMedBench-Leaderboard-green)](https://huggingface.co/spaces/MitakaKuma/AutoMedBench-Leaderboard)
 
